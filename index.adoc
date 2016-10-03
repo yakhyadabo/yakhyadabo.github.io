@@ -1,0 +1,58 @@
+// Il est l’un des outils qui fait le plus de buzz ces temps-ci, bien avant la première release officielle. Dans les conférences il ravit la vedette à toutes les nouveautés technologiques. De Londres à Paris les meetups font salles combles. Pas un seul jour sans un article de blog sur un retour d’expérience. Les principaux fournisseurs de cloud, de Google à Amazon, l’ont pris en compte dans leur offre. Même Microsoft a dû bidouiller son OS pour une intégration future avec Windows Server 2016. Pour beaucoup d’entreprises Docker arrive exactement à une phase cruciale. Dans un contexte DevOps où la vieille architecture monolithique cède progressivement la place aux micro services afin de permettre à des équipes Agiles d’avoir des déploiements fluides sur le Cloud grâce au Continuous Delivery.
+[.text-justify]
+When you use Docker your deployment unit becomes a container. The goal is to reduce the gap between Dev and Ops, with a light and portable packaging, easier to install. The environment remains the same anywhere, both in dev and prod. The deliverable will contain the binary (jar, war, deb, …) and everything that is required to run the application, namely the OS. The deployment will be handled by the container technology. Different versions of the same technology (Java 1.6, 1.7, 1.8, …) can be hosted in the same machine. With this level of portability we are far of being hostage of “it works on my machine” and ghost bugs that are difficult to reproduce. It enables developers to explore new areas at a lower price with quick feedback. We can easily pull a ready-to-use container, experiment with it and get rid of it in record time. 
+
+[.text-justify]
+The success of Docker is linked to the fact that it provides a new way of isolating process by containerisation. Hardware virtualisation technologies, such as Hypervisors 1 and 2, used to provide the same solution, but without being popular, because of the heavy workload involved in their implementation. Indeed (In fact) containerisation predates the tool, but Docker has the merit to democratise its utilisation by making the implementation easier. 
+
+[.text-justify]
+Containerisation is not only for isolating processes in the same host, it also provides the possibility to manage a whole data-centre as a single host.
+
+=== *Architecture of Docker*
+
+[.text-justify]
+It's a simple client server architecture. For the common use cases the client receives a command from the user and forwards it to the daemon through a socket. But Docker also exposes REST API which can be used to achieve the same purpose.
+
+=== *LXC (Linux container) – Cgroup – Namespaces*
+[.text-justify]
+Docker runs on top of the LXC driver. But release 0.9 introduces libcontainer as default execution environment and it can also interface with libvirt and systemd. Compared to a VM which uses hardware level virtualisation, container technologies such as LXC use OS level virtualisation, which means that processes share the same kernel but have private view of shared resources; CPU, network, memory, IO, etc. A container when viewed from the host is seen as a simple process, but from inside, in it's private space, behaves as normal VM. In order to make this process isolation work LXC leverages two new features of the Kernel (Cgroup and Namespaces). These new features are results of work made by Google on the Kernel since 2006. 
+
+On a different level, chroot can provide processes isolation, but processes shared the same namespace and the same resources. 
+
+[.text-justify]
+*Cgroups (aka Control group) :* it's role is to limit resources consumption, such as CPU, network bandwidth, memory and disk space… of a group of processes. 
+
+[.text-justify]
+*Namespaces :* It creates a jailed environment for a process so that processes running in different environments will not affect each other. This functionality adds a security level since the vulnerability of a jailed process will not contaminate the host. Different type of namespaces are currently supported by Linux. The Network Namespace ensures that each container has it's own network interface, the User Namespace enables the fact that userX of container A is different from userX of container B , the Pid Namespace isolates a process inside it's parent namespace, ... 
+
+[.text-justify]
+*COW (Copy On Write) :* The implementation of COW based files system, such as OverlayFS, AUFS and BRTFS, provides a suitable point of comparison between Containers and VMs. The objective of COW is to optimize the use of disk/memory space. Data shared between multiple processes does not need to be copied. A copy is done only when a process needs to change the data. The original data remains unchanged. This is why hundred containers sharing the same base image will not use 100 times the size of the image. The COW based file system also provides layered architecture that enables data caching. 
+
+[.text-justify]
+Based on these features of the Kernel (Namespaces, Cgroup et le COW) we can make an objective comparison between VM and container on three points : +
+[.text-justify]
+- disk/memory occupation : a container uses less space. It's possible to run 2500 web servers in Docker containers on a single Raspberry Pi. +
+- start up time : As a result of host's kernel sharing, a container starts quicker than a VM. +
+- isolation level : VM offer more isolation, since it leverages it's own OS.
+
+=== *Critical look*
+[.text-justify]
+Docker has a very vibrant community, organised around confs and social networks, Meetups, DockerConf, Github, Twitter, … Each release comes with lot of improvements. This does not, however, prevents it from being subject to criticisms, some of which can be objective and violent. The project remains still young, having an important area for improvement. We might start complaining about the weakness of it's cache system which can be invalidated by slight syntactic change. 
+
+[.text-justify]
+Concerning the security, one of the main contributors of the project such as CoreOS, blames the architecture which “needs to be deeply redesigned”. Namespaces and Cgroup, the main pillars of Docker, require root access to work. Add in the fact the daemon can expose it's services via REST API and you will have a higher risk of host contamination in the event of attack. It's one of the key points on which CoreOS wants to focus through it's project Rocket, a concurrent of Docker. 
+
+[.text-justify]
+The second point, always from CoreOS, targets the new policy of Docker, which has nothing to do with it's initial intentions as you can read it in their https://coreos.com/blog/rocket/[blog] :
+
+****
+[.text-justify]
+Docker now is building tools for launching cloud servers, systems for clustering, and a wide range of functions: building images, running images, uploading, downloading, and eventually even overlay networking, all compiled into one monolithic binary running primarily as root on your server. The standard container manifesto was removed. We should stop talking about Docker container, and start talking about the Docker Platform. It is not becoming the simple composable building block we had envisioned.
+****
+
+=== *Conclusion*
+[.text-justify]
+What ever the case, the use of containers will grow over time. It's a good way to do virtualisation at low cost. Just as Unit Testing help to reduce coupling between different modules, containerising an application, by using “one service per container” as a constraint, leads to build autonomous services around a micro-service architecture. It helps to detect any design flaw, particularly those that violate the rule VII http://12factor.net/port-binding[(Port binding)] of twelve factors. 
+
+[.text-justify]
+Docker is a good starting point, even if the security area remains subject of debate. When answering a question about the issue of security on Linux, Linus Torvalds points out that we will have to make a trade-off between security and functionality. Which means, we may need to look at alternatives of Docker - their design and strategic choices - in order to make a suitable choice in the long run.
