@@ -20,7 +20,7 @@ title: Software Craftsmanship | DevOps | ...
 #   line in _config.yml. It will appear in your document head meta (for
 #   Google search results) and in your feed.xml site description.
 
-baseurl: "/yakhyadabo"
+baseurl: ""
 url: "http://yakhyadabo.github.io"
 twitter_username: yakhyadabo
 github_username: yakhyadabo
