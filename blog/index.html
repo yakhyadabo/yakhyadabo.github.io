@@ -3,8 +3,12 @@ layout: default
 ---
 
 {% for post in site.posts %}
-    <time>{{ post.date | date: "%b %-d, %Y" }}</time>
-    <h3><a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a></h3>
-{% endfor %}
+<li>
+	<span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
 
-<p>subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></p>
+	<h2>
+		<a class="post-link" href="{{ post.url | prepend: site.baseurl }}"> {{ post.title }}</a>
+	</h2>
+	{{ post.excerpt }} <!--excerpt added here-->
+</li>
+{% endfor %}

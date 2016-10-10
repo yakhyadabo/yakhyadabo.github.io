@@ -24,6 +24,8 @@ url: "http://localhost:4000" # the base hostname & protocol for your site
 twitter_username: yakhyadabo
 github_username: yakhyadabo
 
+excerpt_separator: "<!--excerpt-->"
+
 # Build settings
 sass:
   sass_dir: _sass

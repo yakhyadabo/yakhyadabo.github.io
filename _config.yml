@@ -25,6 +25,8 @@ url: "http://yakhyadabo.github.io"
 twitter_username: yakhyadabo
 github_username: yakhyadabo
 
+excerpt_separator: "<!--excerpt-->"
+  
 # Build settings
 sass:
   sass_dir: _sass
